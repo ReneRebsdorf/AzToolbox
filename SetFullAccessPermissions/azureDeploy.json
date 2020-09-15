@@ -65,7 +65,7 @@
                         "logProgress": false,
                         "logVerbose": false,
                         "publishContentLink": {
-                            "uri": "",
+                            "uri": "https://raw.githubusercontent.com/ReneRebsdorf/AzToolbox/master/SetFullAccessPermissions/SetFullAcessPermissions.ps1",
                             "version": "1.0.0.0"
                         }
                     }
