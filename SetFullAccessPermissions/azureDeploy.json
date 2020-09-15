@@ -33,10 +33,13 @@
         },
         "automationAccountName": {
             "type": "string"
+        },
+        "jobScheduleGUID": {
+            "type": "string"
         }
     },
     "variables": {
-        
+
     },
     "resources": [
         {
@@ -59,7 +62,7 @@
                     "name": "fullAccessPermissions",
                     "dependsOn": [ "[resourceId('Microsoft.Automation/automationAccounts',parameters('AutomationAccountName'))]" ],
                     "tags": "[parameters('Tags')]",
-                    "location":"[parameters('AzLocation')]",
+                    "location": "[parameters('AzLocation')]",
                     "properties": {
                         "runbookType": "PowerShell",
                         "logProgress": false,
@@ -76,10 +79,28 @@
                     "name": "fullAccessPermissions",
                     "dependsOn": [ "[resourceId('Microsoft.Automation/automationAccounts',parameters('AutomationAccountName'))]" ],
                     "tags": "[parameters('Tags')]",
-                    "location":"[parameters('AzLocation')]",
+                    "location": "[parameters('AzLocation')]",
                     "properties": {
                         "frequency": "Day",
+                        "interval": 1,
+                        "timeZone": "UTC",
                         "startTime": "[dateTimeAdd(parameters('baseTime'), 'P1DT1H')]"
+                    }
+                },
+                {
+                    "type": "jobSchedules",
+                    "apiVersion": "2015-10-31",
+                    "name": "[parameters('jobScheduleGUID')]",
+                    "dependsOn": [ "[resourceId('Microsoft.Automation/automationAccounts',parameters('AutomationAccountName'))]" ],
+                    "tags": "[parameters('Tags')]",
+                    "location": "[parameters('AzLocation')]",
+                    "properties": {
+                        "runbook": {
+                            "name": "fullAccessPermissions"
+                        },
+                        "schedule": {
+                            "name": "fullAccessPermissions"
+                        }
                     }
                 },
                 {
@@ -111,7 +132,7 @@
                             "CertificateThumbPrint": "[parameters('exchangeOnlineCertThumbprint')]"
                         }
                     },
-                    "dependsOn": ["[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"]
+                    "dependsOn": [ "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]" ]
                 },
                 {
                     "type": "certificates",
@@ -128,7 +149,7 @@
                     "type": "variables",
                     "apiVersion": "2015-10-31",
                     "name": "orgName",
-                    "dependsOn": ["[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"],
+                    "dependsOn": [ "[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]" ],
                     "properties": {
                         "value": "[concat('\"',parameters('orgName'),'\"')]"
                     }

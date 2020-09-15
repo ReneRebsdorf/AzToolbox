@@ -1,38 +1,41 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "Tags": {
-        "value": {}
-      },
-      "AzLocation": {
-        "value": "westeurope"
-      },
-      "ServiceAccountName": {
-          "value": "datascan@e-nettet.dk"
-      },
-      "OrgName":{
-        "value": "yourOrg.onmicrosoft.com"
-      },
-      "exchangeOnlineAppID": {
-          "value": "ApplicationIdOfAppRegistrationOrSP"
-      },
-      "exchangeOnlineCertBase64Priv": {
-          "reference": {
-            "secretName": "nameOfYourCertificate",
-            "keyVault": {
-              "id": "/subscriptions/yourSubscription/resourceGroups/rgContainerKeyVault/providers/Microsoft.KeyVault/vaults/keyvaultName"
-            }
-          }
-      },
-      "exchangeOnlineCertThumbprint": {
-          "value": "TheThumbPrint"
-      },
-      "exchangeOnlineResultSize": {
-          "value": "unlimited"
-      },
-      "AutomationAccountName": {
-          "value": "yourAutomationAccountName"
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "Tags": {
+      "value": {}
+    },
+    "AzLocation": {
+      "value": "westeurope"
+    },
+    "ServiceAccountName": {
+      "value": "serviceAccount@yourOrg.com"
+    },
+    "OrgName": {
+      "value": "yourOrg.onmicrosoft.com"
+    },
+    "exchangeOnlineAppID": {
+      "value": "ApplicationIdOfAppRegistrationOrSP"
+    },
+    "exchangeOnlineCertBase64Priv": {
+      "reference": {
+        "secretName": "nameOfYourCertificate",
+        "keyVault": {
+          "id": "/subscriptions/yourSubscription/resourceGroups/rgContainerKeyVault/providers/Microsoft.KeyVault/vaults/keyvaultName"
+        }
       }
+    },
+    "exchangeOnlineCertThumbprint": {
+      "value": "TheThumbPrint"
+    },
+    "exchangeOnlineResultSize": {
+      "value": "unlimited"
+    },
+    "AutomationAccountName": {
+      "value": "yourAutomationAccountName"
+    },
+    "jobScheduleGUID": {
+      "value": "GENERATE-A-GUID"
     }
   }
+}
