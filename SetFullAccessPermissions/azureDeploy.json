@@ -1,0 +1,159 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "AzLocation": {
+            "type": "string"
+        },
+        "Tags": {
+            "type": "object"
+        },
+        "baseTime": {
+            "type": "string",
+            "defaultValue": "[utcNow('d')]"
+        },
+        "ServiceAccountName": {
+            "type": "string"
+        },
+        "orgName": {
+            "type": "string"
+        },
+        "exchangeOnlineAppID": {
+            "type": "string"
+        },
+        "exchangeOnlineCertBase64Priv": {
+            "type": "securestring"
+        },
+        "exchangeOnlineCertThumbprint": {
+            "type": "string"
+        },
+        "exchangeOnlineResultSize": {
+            "type": "string",
+            "defaultValue": "1000"
+        },
+        "automationAccountName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Automation/automationAccounts",
+            "name": "[parameters('AutomationAccountName')]",
+            "apiVersion": "2015-10-31",
+            "location": "[parameters('AzLocation')]",
+            "tags": "[parameters('Tags')]",
+            "properties": {
+                "sku": {
+                    "name": "Basic"
+                }
+            },
+            "dependsOn": [
+            ],
+            "resources": [
+                {
+                    "type": "runbooks",
+                    "apiVersion": "2018-06-30",
+                    "name": "fullAccessPermissions",
+                    "dependsOn": [ "[resourceId('Microsoft.Automation/automationAccounts',parameters('AutomationAccountName'))]" ],
+                    "tags": "[parameters('Tags')]",
+                    "location":"[parameters('AzLocation')]",
+                    "properties": {
+                        "runbookType": "PowerShell",
+                        "logProgress": false,
+                        "logVerbose": false,
+                        "publishContentLink": {
+                            "uri": "",
+                            "version": "1.0.0.0"
+                        }
+                    }
+                },
+                {
+                    "type": "schedules",
+                    "apiVersion": "2015-10-31",
+                    "name": "fullAccessPermissions",
+                    "dependsOn": [ "[resourceId('Microsoft.Automation/automationAccounts',parameters('AutomationAccountName'))]" ],
+                    "tags": "[parameters('Tags')]",
+                    "location":"[parameters('AzLocation')]",
+                    "properties": {
+                        "frequency": "Day",
+                        "startTime": "[dateTimeAdd(parameters('baseTime'), 'P1DT1H')]"
+                    }
+                },
+                {
+                    "type": "modules",
+                    "apiVersion": "2015-10-31",
+                    "name": "ExchangeOnlineManagement",
+                    "dependsOn": [ "[resourceId('Microsoft.Automation/automationAccounts',parameters('AutomationAccountName'))]" ],
+                    "properties": {
+                        "contentLink": {
+                            "uri": "https://www.powershellgallery.com/api/v2/package/ExchangeOnlineManagement/2.0.3-Preview"
+                        }
+                    }
+                },
+                {
+                    "type": "connections",
+                    "apiVersion": "2015-10-31",
+                    "name": "AzureRunAsConnection",
+                    "properties": {
+                        "name": "AzureRunAsConnection",
+                        "description": "Azure connection",
+                        "isGlobal": false,
+                        "connectionType": {
+                            "name": "AzureServicePrincipal"
+                        },
+                        "fieldDefinitionValues": {
+                            "SubscriptionId": "[subscription().subscriptionId]",
+                            "ApplicationId": "[parameters('exchangeOnlineAppID')]",
+                            "TenantId": "[subscription().tenantId]",
+                            "CertificateThumbPrint": "[parameters('exchangeOnlineCertThumbprint')]"
+                        }
+                    },
+                    "dependsOn": ["[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"]
+                },
+                {
+                    "type": "certificates",
+                    "apiVersion": "2015-10-31",
+                    "name": "RunAsCertificate",
+                    "dependsOn": [ "[resourceId('Microsoft.Automation/automationAccounts',parameters('AutomationAccountName'))]" ],
+                    "properties": {
+                        "base64Value": "[parameters('exchangeOnlineCertBase64Priv')]",
+                        "thumbprint": "[parameters('exchangeOnlineCertThumbprint')]",
+                        "isExportable": false
+                    }
+                },
+                {
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "name": "orgName",
+                    "dependsOn": ["[resourceId('Microsoft.Automation/automationAccounts', parameters('AutomationAccountName'))]"],
+                    "properties": {
+                        "value": "[concat('\"',parameters('orgName'),'\"')]"
+                    }
+                },
+                {
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "name": "ServiceAccountName",
+                    "dependsOn": [ "[resourceId('Microsoft.Automation/automationAccounts',parameters('AutomationAccountName'))]" ],
+                    "properties": {
+                        "value": "[concat('\"',parameters('ServiceAccountName'),'\"')]"
+                    }
+                },
+                {
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "name": "exchangeOnlineResultSize",
+                    "dependsOn": [ "[resourceId('Microsoft.Automation/automationAccounts',parameters('AutomationAccountName'))]" ],
+                    "properties": {
+                        "value": "[concat('\"',parameters('exchangeOnlineResultSize'),'\"')]"
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {
+    }
+}
