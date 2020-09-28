@@ -43,7 +43,7 @@ try {
         Write-Verbose "Minutes elapsed: $($stopWatch.Elapsed.TotalMinutes)"
 
         Write-Verbose "Setting Mailbox permission for: $($_.SAMAccountName)"
-        Add-MailboxPermission -Identity $_.SAMAccountName -User $serviceAccount -AccessRights FullAccess -InheritanceType all -WarningAction SilentlyContinue
+        Add-MailboxPermission -Identity $_.UserPrincipalName -User $serviceAccount -AccessRights FullAccess -InheritanceType all -WarningAction "continue"
 
         $processedMailboxes++
         Write-Verbose "Processed mailboxes: $processedMailboxes"
